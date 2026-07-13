@@ -1147,12 +1147,14 @@ async function loadAllData() {
 
 // ---- persistence: each function upserts the current in-memory array to Supabase ----
 async function save() {
-  const [r1, r2] = await Promise.all([
-    DB.patients.length ? sb.from('patients').upsert(DB.patients.map(patientToRow)) : Promise.resolve({}),
-    DB.visits.length ? sb.from('visits').upsert(DB.visits.map(visitToRow)) : Promise.resolve({})
-  ]);
-  if (r1.error || r2.error) { setSyncStatus(false); showToast('Could not sync to server — check internet connection', 'error'); }
-  else setSyncStatus(true);
+  // Patients must be saved BEFORE visits, since each visit's patient_id
+  // is a foreign key referencing the patients table — saving them in
+  // parallel can fail if the patient row doesn't exist yet.
+  const r1 = DB.patients.length ? await sb.from('patients').upsert(DB.patients.map(patientToRow)) : {};
+  if (r1.error) { setSyncStatus(false); showToast('Could not save patient to server — check internet connection', 'error'); return; }
+  const r2 = DB.visits.length ? await sb.from('visits').upsert(DB.visits.map(visitToRow)) : {};
+  if (r2.error) { setSyncStatus(false); showToast('Could not save visit to server — check internet connection', 'error'); return; }
+  setSyncStatus(true);
 }
 async function saveDental() {
   const rows = [];
