@@ -204,6 +204,13 @@
   .profile-info-grid .pc-lbl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
   .profile-info-grid .pc-val { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
 
+  .file-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 10px; margin-bottom: 10px; }
+  .file-thumb { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 1; background: var(--gray); cursor: pointer; transition: transform 0.15s; }
+  .file-thumb:hover { transform: scale(1.03); }
+  .file-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .file-thumb .file-pdf-icon { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 26px; color: var(--muted); }
+  .file-thumb .file-del { position: absolute; top: 4px; right: 4px; background: rgba(192,57,43,0.92); color: #fff; border: none; border-radius: 6px; width: 20px; height: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
   .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 20px; }
   .summary-chip { text-align: center; background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; }
   .summary-chip .num { font-size: 17px; font-weight: 700; color: var(--teal); }
@@ -232,10 +239,18 @@
   .pay-summary .num { font-size: 16px; font-weight: 700; color: var(--teal); }
   .pay-summary .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; font-weight: 700; margin-top: 2px; }
 
-  .doc-letterhead { text-align: center; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 2px solid var(--teal); }
-  .doc-letterhead .dl-logo { font-size: 30px; }
-  .doc-letterhead h2 { font-size: 18px; color: var(--teal); font-weight: 700; margin-top: 4px; }
-  .doc-letterhead p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .doc-letterhead {
+    text-align: center;
+    padding: 22px 20px 18px;
+    margin: -22px -24px 20px -24px;
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    border-radius: 16px 16px 0 0;
+    position: relative;
+  }
+  .doc-letterhead::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: linear-gradient(90deg, var(--gold), #E4CD7F, var(--gold)); }
+  .doc-letterhead .dl-logo { font-size: 32px; }
+  .doc-letterhead h2 { font-size: 19px; color: var(--white); font-weight: 700; margin-top: 6px; letter-spacing: 0.3px; }
+  .doc-letterhead p { font-size: 11px; color: rgba(255,255,255,0.85); margin-top: 3px; }
   .doc-meta-row { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
   .doc-meta-row b { color: var(--text); }
   .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px; }
@@ -244,7 +259,25 @@
   .doc-table td.r { text-align: right; }
   .doc-total-row td { font-weight: 700; font-size: 14px; border-top: 2px solid var(--teal); border-bottom: none; }
   .doc-status-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; }
-  .doc-foot { text-align: center; margin-top: 22px; font-size: 11px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 14px; }
+  .doc-foot {
+    text-align: center;
+    margin: 22px -24px -26px -24px;
+    padding: 16px 20px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.9);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    border-radius: 0 0 16px 16px;
+  }
+  .rx-symbol { font-size: 38px; font-weight: 700; color: var(--teal); font-family: Georgia, serif; }
+  .rx-block { background: var(--gray); border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; white-space: pre-wrap; font-size: 13.5px; line-height: 1.7; min-height: 60px; }
+  .rx-advice { background: var(--gold-light); border-left: 3px solid var(--gold); border-radius: 8px; padding: 12px 14px; font-size: 12.5px; color: var(--amber); margin-bottom: 12px; }
+  .rx-signature { text-align: right; margin-top: 30px; font-size: 12px; color: var(--muted); }
+  .rx-signature .sig-line { border-top: 1.5px solid var(--text); width: 180px; margin: 30px 0 6px auto; }
+
+  #receiptModal .modal-head, #opdModal .modal-head, #prescriptionModal .modal-head { background: transparent; padding: 14px 20px 0; }
+  #receiptModal .modal-avatar, #opdModal .modal-avatar, #prescriptionModal .modal-avatar,
+  #receiptModal .modal-head-info, #opdModal .modal-head-info, #prescriptionModal .modal-head-info { display: none; }
+  #receiptModal .modal-close, #opdModal .modal-close, #prescriptionModal .modal-close { color: var(--muted); background: var(--gray); margin-left: auto; }
   .opd-box { border: 1.5px dashed var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 6px; }
   .opd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; font-size: 13px; }
   .opd-grid .l { color: var(--muted); font-weight: 600; }
@@ -329,13 +362,15 @@
   }
 
   @media print {
-    body > *:not(#receiptModal):not(#opdModal) { display: none !important; }
+    body > *:not(#receiptModal):not(#opdModal):not(#prescriptionModal) { display: none !important; }
     .modal-overlay { display: none !important; }
     body.printing-receipt #receiptModal,
-    body.printing-opd #opdModal { display: flex !important; position: static; background: none; padding: 0; }
+    body.printing-opd #opdModal,
+    body.printing-prescription #prescriptionModal { display: flex !important; position: static; background: none; padding: 0; }
     body.printing-receipt #receiptModal .modal-box,
-    body.printing-opd #opdModal .modal-box { box-shadow: none; max-width: 100%; border-radius: 0; }
-    .modal-close, .modal-actions { display: none !important; }
+    body.printing-opd #opdModal .modal-box,
+    body.printing-prescription #prescriptionModal .modal-box { box-shadow: none; max-width: 100%; border-radius: 0; }
+    .modal-close, .modal-actions, .modal-head { display: none !important; }
   }
 </style>
 </head>
@@ -747,6 +782,15 @@
     <div class="modal-body">
       <div class="profile-info-grid" id="pmInfoGrid"></div>
       <div class="summary-row" id="pmSummary"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="section-tag" style="margin:18px 0 10px;flex:1;">Medical History</div>
+        <button class="btn-outline" style="padding:5px 12px;font-size:11px;flex-shrink:0;" onclick="openMedicalHistory()">✏️ Edit</button>
+      </div>
+      <div class="profile-info-grid" id="pmMedicalGrid"></div>
+      <div class="section-tag">Photos & X-Rays</div>
+      <div class="file-gallery" id="pmFileGallery"></div>
+      <input type="file" id="pmFileInput" accept="image/*,application/pdf" style="display:none" onchange="uploadPatientFile(this.files)">
+      <button class="btn-outline" style="margin-bottom:10px;" onclick="document.getElementById('pmFileInput').click()">+ Upload Photo / X-Ray</button>
       <div class="section-tag">Visit History</div>
       <div class="timeline" id="pmTimeline"></div>
     </div>
@@ -853,6 +897,42 @@
   </div>
 </div>
 
+<!-- ══════════════ PRESCRIPTION MODAL ══════════════ -->
+<div class="modal-overlay" id="prescriptionModal" onclick="if(event.target===this) closeModal('prescriptionModal')">
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <div class="modal-avatar">💊</div>
+      <div class="modal-head-info"><h2>Prescription</h2><p id="rxDateHead">—</p></div>
+      <button class="modal-close" onclick="closeModal('prescriptionModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="doc-letterhead">
+        <div class="dl-logo" id="rxLogo">🦷</div>
+        <h2 id="rxClinicName">PATA Dental Clinic</h2>
+        <p id="rxClinicSub">Pakistan Anti TB Association | 16-K Gulberg III, Lahore</p>
+        <p id="rxClinicPhoneLine">📞 0300 6581830</p>
+      </div>
+      <div class="doc-meta-row">
+        <div>Patient: <b id="rxPatientName">—</b><br>Age/Gender: <b id="rxAgeGender">—</b></div>
+        <div style="text-align:right">Date: <b id="rxDate">—</b><br>Doctor: <b id="rxDoctor">—</b></div>
+      </div>
+      <div class="rx-symbol">℞</div>
+      <div class="rx-block" id="rxPrescriptionText">—</div>
+      <div class="rx-advice" id="rxAdviceBlock" style="display:none;"></div>
+      <div id="rxNextVisitBlock" style="font-size:12.5px;color:var(--muted);"></div>
+      <div class="rx-signature">
+        <div class="sig-line"></div>
+        <div id="rxDoctorSignName">Doctor's Signature</div>
+      </div>
+      <div class="doc-foot">Get well soon! For any query, contact us at the number above.</div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal('prescriptionModal')">Close</button>
+        <button class="btn-add" onclick="printPrescription()">🖨 Print / Save as PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════ TOOTH MODAL ══════════════ -->
 <div class="modal-overlay" id="toothModal" onclick="if(event.target===this) closeModal('toothModal')">
   <div class="modal-box narrow">
@@ -883,6 +963,64 @@
       </div>
       <div class="section-tag">Tooth History</div>
       <div id="toothHistory"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MEDICAL HISTORY MODAL ══════════════ -->
+<div class="modal-overlay" id="medicalModal" onclick="if(event.target===this) closeModal('medicalModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-avatar">🩺</div>
+      <div class="modal-head-info"><h2>Medical History</h2><p id="medPatientLine">—</p></div>
+      <button class="modal-close" onclick="closeModal('medicalModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Blood Group</label>
+          <select id="medBloodGroup"><option value="">— Select —</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option><option>Unknown</option></select>
+        </div>
+        <div class="field"><label>Diabetes</label><select id="medDiabetes"><option value="">— Select —</option><option>Yes</option><option>No</option><option>Unknown</option></select></div>
+        <div class="field"><label>Hepatitis</label><select id="medHepatitis"><option value="">— Select —</option><option>Yes</option><option>No</option><option>Unknown</option></select></div>
+        <div class="field"><label>Hypertension</label><select id="medHypertension"><option value="">— Select —</option><option>Yes</option><option>No</option><option>Unknown</option></select></div>
+        <div class="field"><label>Consent Status</label><select id="medConsent"><option>Not Signed</option><option>Signed</option><option>Verbal</option></select></div>
+        <div class="field"><label>Emergency Contact Name</label><input type="text" id="medEmergencyName"></div>
+        <div class="field"><label>Emergency Contact Number</label><input type="tel" id="medEmergencyNumber"></div>
+        <div class="field" style="grid-column: span 2;"><label>Allergies</label><textarea id="medAllergies" placeholder="e.g. Penicillin, Latex..."></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Current Medicines</label><textarea id="medCurrentMeds"></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Family History</label><textarea id="medFamilyHistory"></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Previous Dental History</label><textarea id="medDentalHistory"></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-clear" onclick="closeModal('medicalModal')">Cancel</button>
+        <button class="btn-add" onclick="saveMedicalHistory()">💾 Save Medical History</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CLINICAL NOTES MODAL ══════════════ -->
+<div class="modal-overlay" id="clinicalModal" onclick="if(event.target===this) closeModal('clinicalModal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-avatar">📝</div>
+      <div class="modal-head-info"><h2>Clinical Notes</h2><p id="clnVisitLine">—</p></div>
+      <button class="modal-close" onclick="closeModal('clinicalModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field" style="grid-column: span 2;"><label>Chief Complaint</label><textarea id="clnComplaint" placeholder="Why the patient came in..."></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Clinical Examination</label><textarea id="clnExam"></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Diagnosis</label><textarea id="clnDiagnosis"></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Treatment Performed</label><textarea id="clnTreatment"></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Prescription</label><textarea id="clnPrescription"></textarea></div>
+        <div class="field" style="grid-column: span 2;"><label>Advice</label><textarea id="clnAdvice"></textarea></div>
+        <div class="field"><label>Next Visit Date</label><input type="date" id="clnNextVisit"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-clear" onclick="closeModal('clinicalModal')">Cancel</button>
+        <button class="btn-add" onclick="saveClinicalNotes()">💾 Save Clinical Notes</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1088,11 +1226,11 @@ function setSyncStatus(ok, msg) {
 }
 
 // ---- mappers: row (snake_case, from Supabase) <-> object (camelCase, app-internal) ----
-const rowToPatient = r => ({ patientId: r.patient_id, name: r.name, guardian: r.guardian, age: r.age, gender: r.gender, cnic: r.cnic, whatsapp: r.whatsapp, altNumber: r.alt_number, address: r.address, createdDate: r.created_date });
-const patientToRow = p => ({ patient_id: p.patientId, name: p.name, guardian: p.guardian||'', age: p.age||'', gender: p.gender||'', cnic: p.cnic||'', whatsapp: p.whatsapp||'', alt_number: p.altNumber||'', address: p.address||'', created_date: p.createdDate });
+const rowToPatient = r => ({ patientId: r.patient_id, name: r.name, guardian: r.guardian, age: r.age, gender: r.gender, cnic: r.cnic, whatsapp: r.whatsapp, altNumber: r.alt_number, address: r.address, createdDate: r.created_date, bloodGroup: r.blood_group, allergies: r.allergies, diabetes: r.diabetes, hepatitis: r.hepatitis, hypertension: r.hypertension, currentMedicines: r.current_medicines, emergencyContactName: r.emergency_contact_name, emergencyContactNumber: r.emergency_contact_number, familyHistory: r.family_history, previousDentalHistory: r.previous_dental_history, consentStatus: r.consent_status });
+const patientToRow = p => ({ patient_id: p.patientId, name: p.name, guardian: p.guardian||'', age: p.age||'', gender: p.gender||'', cnic: p.cnic||'', whatsapp: p.whatsapp||'', alt_number: p.altNumber||'', address: p.address||'', created_date: p.createdDate, blood_group: p.bloodGroup||'', allergies: p.allergies||'', diabetes: p.diabetes||'', hepatitis: p.hepatitis||'', hypertension: p.hypertension||'', current_medicines: p.currentMedicines||'', emergency_contact_name: p.emergencyContactName||'', emergency_contact_number: p.emergencyContactNumber||'', family_history: p.familyHistory||'', previous_dental_history: p.previousDentalHistory||'', consent_status: p.consentStatus||'Not Signed' });
 
-const rowToVisit = r => ({ id: r.id, billNumber: r.bill_number, patientId: r.patient_id, doctor: r.doctor, procedure: r.procedure, customProcedure: r.custom_procedure, notes: r.notes, date: r.date, consultationFee: Number(r.consultation_fee)||0, procedureCharges: Number(r.procedure_charges)||0, discount: Number(r.discount)||0, paid: Number(r.paid)||0, paymentMethod: r.payment_method, paymentDate: r.payment_date, repeat: r.repeat, visitNumber: r.visit_number, month: r.month, year: r.year });
-const visitToRow = v => ({ id: v.id, bill_number: v.billNumber, patient_id: v.patientId, doctor: v.doctor, procedure: v.procedure||'', custom_procedure: v.customProcedure||'', notes: v.notes||'', date: v.date||null, consultation_fee: v.consultationFee||0, procedure_charges: v.procedureCharges||0, discount: v.discount||0, paid: v.paid||0, payment_method: v.paymentMethod||'', payment_date: v.paymentDate||null, repeat: !!v.repeat, visit_number: v.visitNumber||1, month: v.month||'', year: v.year||'' });
+const rowToVisit = r => ({ id: r.id, billNumber: r.bill_number, patientId: r.patient_id, doctor: r.doctor, procedure: r.procedure, customProcedure: r.custom_procedure, notes: r.notes, date: r.date, consultationFee: Number(r.consultation_fee)||0, procedureCharges: Number(r.procedure_charges)||0, discount: Number(r.discount)||0, paid: Number(r.paid)||0, paymentMethod: r.payment_method, paymentDate: r.payment_date, repeat: r.repeat, visitNumber: r.visit_number, month: r.month, year: r.year, chiefComplaint: r.chief_complaint, clinicalExamination: r.clinical_examination, diagnosis: r.diagnosis, treatmentPerformed: r.treatment_performed, prescription: r.prescription, advice: r.advice, nextVisitDate: r.next_visit_date });
+const visitToRow = v => ({ id: v.id, bill_number: v.billNumber, patient_id: v.patientId, doctor: v.doctor, procedure: v.procedure||'', custom_procedure: v.customProcedure||'', notes: v.notes||'', date: v.date||null, consultation_fee: v.consultationFee||0, procedure_charges: v.procedureCharges||0, discount: v.discount||0, paid: v.paid||0, payment_method: v.paymentMethod||'', payment_date: v.paymentDate||null, repeat: !!v.repeat, visit_number: v.visitNumber||1, month: v.month||'', year: v.year||'', chief_complaint: v.chiefComplaint||'', clinical_examination: v.clinicalExamination||'', diagnosis: v.diagnosis||'', treatment_performed: v.treatmentPerformed||'', prescription: v.prescription||'', advice: v.advice||'', next_visit_date: v.nextVisitDate||null });
 
 const rowToPlan = r => ({ id: r.id, planNumber: r.plan_number, patientId: r.patient_id, title: r.title, createdDate: r.created_date, procedures: r.procedures || [] });
 const planToRow = p => ({ id: p.id, plan_number: p.planNumber, patient_id: p.patientId, title: p.title, created_date: p.createdDate, procedures: p.procedures });
@@ -1305,6 +1443,10 @@ function applyBranding() {
   document.getElementById('rcClinicPhoneLine').textContent = '📞 ' + DB.settings.clinicPhone;
   document.getElementById('opdLogo').textContent = DB.settings.logoEmoji;
   document.getElementById('opdClinicName').textContent = DB.settings.clinicName;
+  document.getElementById('rxLogo').textContent = DB.settings.logoEmoji;
+  document.getElementById('rxClinicName').textContent = DB.settings.clinicName;
+  document.getElementById('rxClinicSub').textContent = (DB.settings.clinicSubtitle ? DB.settings.clinicSubtitle + ' | ' : '') + DB.settings.clinicAddress;
+  document.getElementById('rxClinicPhoneLine').textContent = '📞 ' + DB.settings.clinicPhone;
   document.getElementById('footerTagline').textContent = `"Your Smile is Our Priority" — ${DB.settings.clinicName}`;
   document.getElementById('footerDevLine').textContent = `Developed Exclusively for ${DB.settings.clinicName}`;
   document.querySelector('#aptDoctor option[value="morning"]').textContent = DOCTOR_NAMES.morning + ' (Morning)';
@@ -1616,6 +1758,7 @@ function renderTable() {
             <button class="icon-btn" onclick="openProfile('${p.patientId}')" title="View Profile">👁</button>
             <button class="icon-btn" onclick="sendThankYouWhatsApp('${p.patientId}')" title="Send Thank You on WhatsApp">💬</button>
             <button class="icon-btn" onclick="openReceipt(${v.id})" title="Receipt">🧾</button>
+            <button class="icon-btn" onclick="openPrescription(${v.id})" title="Prescription">💊</button>
             <button class="icon-btn" onclick="openOPD(${v.id})" title="OPD Slip">📋</button>
             <button class="icon-btn del" onclick="deleteVisit(${v.id})" title="Delete">✕</button>
           </div>
@@ -1775,6 +1918,7 @@ async function savePayment() {
 function openProfile(patientId) {
   const p = DB.patients.find(pt => pt.patientId === patientId);
   if (!p) return;
+  currentProfilePatientId = patientId;
   const visits = patientVisits(patientId);
   const totalBilled = visits.reduce((s,v) => s + visitTotal(v), 0);
   const totalPaid   = visits.reduce((s,v) => s + (v.paid||0), 0);
@@ -1797,6 +1941,7 @@ function openProfile(patientId) {
     <div class="summary-chip"><div class="num">${money(totalPaid)}</div><div class="lbl">Paid</div></div>
     <div class="summary-chip due"><div class="num">${money(totalDue)}</div><div class="lbl">Due</div></div>
   `;
+  renderMedicalGrid(p);
   const tl = [...visits].reverse();
   document.getElementById('pmTimeline').innerHTML = tl.length ? tl.map(v => `
     <div class="timeline-item ${v.repeat ? 'visit-repeat' : ''}">
@@ -1805,16 +1950,143 @@ function openProfile(patientId) {
         <div class="ti-proc">${esc(v.customProcedure || v.procedure || 'N/A')}</div>
         <div class="ti-doctor">${esc(DOCTOR_NAMES[v.doctor] || v.doctor)}</div>
         ${v.notes ? `<div class="ti-notes">${esc(v.notes)}</div>` : ''}
+        ${(v.chiefComplaint || v.diagnosis) ? `<div class="ti-notes">${v.chiefComplaint ? `<b>Complaint:</b> ${esc(v.chiefComplaint)}<br>` : ''}${v.diagnosis ? `<b>Diagnosis:</b> ${esc(v.diagnosis)}<br>` : ''}${v.nextVisitDate ? `<b>Next Visit:</b> ${fmtDate(v.nextVisitDate)}` : ''}</div>` : ''}
         <div class="ti-money">
           <span style="color:var(--teal)">Billed: ${money(visitTotal(v))}</span>
           <span style="color:var(--green)">Paid: ${money(v.paid)}</span>
           <span style="color:var(--red)">Due: ${money(visitDue(v))}</span>
         </div>
         <div class="ti-bill">${esc(v.billNumber || '')}</div>
+        <button class="btn-outline" style="margin-top:8px;padding:5px 12px;font-size:11px;" onclick="openClinicalNotes(${v.id})">📝 Clinical Notes${v.diagnosis || v.chiefComplaint ? ' ✓' : ''}</button>
+        <button class="btn-outline" style="margin-top:8px;padding:5px 12px;font-size:11px;" onclick="openPrescription(${v.id})">💊 Prescription</button>
       </div>
     </div>
   `).join('') : '<div class="empty-state">No visit history yet</div>';
+  loadPatientFiles(patientId);
   openModal('profileModal');
+}
+
+/* ── Module 1: Medical History ── */
+function renderMedicalGrid(p) {
+  document.getElementById('pmMedicalGrid').innerHTML = `
+    <div><div class="pc-lbl">Blood Group</div><div class="pc-val">${esc(p.bloodGroup) || '—'}</div></div>
+    <div><div class="pc-lbl">Diabetes</div><div class="pc-val">${esc(p.diabetes) || '—'}</div></div>
+    <div><div class="pc-lbl">Hepatitis</div><div class="pc-val">${esc(p.hepatitis) || '—'}</div></div>
+    <div><div class="pc-lbl">Hypertension</div><div class="pc-val">${esc(p.hypertension) || '—'}</div></div>
+    <div><div class="pc-lbl">Consent Status</div><div class="pc-val">${esc(p.consentStatus) || 'Not Signed'}</div></div>
+    <div><div class="pc-lbl">Emergency Contact</div><div class="pc-val">${esc(p.emergencyContactName) || '—'}${p.emergencyContactNumber ? ' · ' + esc(p.emergencyContactNumber) : ''}</div></div>
+    <div style="grid-column: span 2;"><div class="pc-lbl">Allergies</div><div class="pc-val">${esc(p.allergies) || '—'}</div></div>
+    <div style="grid-column: span 2;"><div class="pc-lbl">Current Medicines</div><div class="pc-val">${esc(p.currentMedicines) || '—'}</div></div>
+    <div style="grid-column: span 2;"><div class="pc-lbl">Family History</div><div class="pc-val">${esc(p.familyHistory) || '—'}</div></div>
+    <div style="grid-column: span 2;"><div class="pc-lbl">Previous Dental History</div><div class="pc-val">${esc(p.previousDentalHistory) || '—'}</div></div>
+  `;
+}
+function openMedicalHistory() {
+  const p = DB.patients.find(x => x.patientId === currentProfilePatientId);
+  if (!p) return;
+  document.getElementById('medPatientLine').textContent = `${p.name} (${p.patientId})`;
+  document.getElementById('medBloodGroup').value = p.bloodGroup || '';
+  document.getElementById('medDiabetes').value = p.diabetes || '';
+  document.getElementById('medHepatitis').value = p.hepatitis || '';
+  document.getElementById('medHypertension').value = p.hypertension || '';
+  document.getElementById('medConsent').value = p.consentStatus || 'Not Signed';
+  document.getElementById('medEmergencyName').value = p.emergencyContactName || '';
+  document.getElementById('medEmergencyNumber').value = p.emergencyContactNumber || '';
+  document.getElementById('medAllergies').value = p.allergies || '';
+  document.getElementById('medCurrentMeds').value = p.currentMedicines || '';
+  document.getElementById('medFamilyHistory').value = p.familyHistory || '';
+  document.getElementById('medDentalHistory').value = p.previousDentalHistory || '';
+  openModal('medicalModal');
+}
+async function saveMedicalHistory() {
+  const p = DB.patients.find(x => x.patientId === currentProfilePatientId);
+  if (!p) return;
+  p.bloodGroup = document.getElementById('medBloodGroup').value;
+  p.diabetes = document.getElementById('medDiabetes').value;
+  p.hepatitis = document.getElementById('medHepatitis').value;
+  p.hypertension = document.getElementById('medHypertension').value;
+  p.consentStatus = document.getElementById('medConsent').value;
+  p.emergencyContactName = document.getElementById('medEmergencyName').value.trim();
+  p.emergencyContactNumber = document.getElementById('medEmergencyNumber').value.trim();
+  p.allergies = document.getElementById('medAllergies').value.trim();
+  p.currentMedicines = document.getElementById('medCurrentMeds').value.trim();
+  p.familyHistory = document.getElementById('medFamilyHistory').value.trim();
+  p.previousDentalHistory = document.getElementById('medDentalHistory').value.trim();
+  closeModal('medicalModal');
+  renderMedicalGrid(p);
+  await save();
+  showToast('Medical history saved', 'success');
+}
+
+/* ── Module 2: Clinical Notes (per visit) ── */
+let currentClinicalVisitId = null;
+function openClinicalNotes(visitId) {
+  const v = DB.visits.find(x => x.id === visitId);
+  if (!v) return;
+  currentClinicalVisitId = visitId;
+  document.getElementById('clnVisitLine').textContent = `Visit #${v.visitNumber || '—'} · ${fmtDate(v.date)}`;
+  document.getElementById('clnComplaint').value = v.chiefComplaint || '';
+  document.getElementById('clnExam').value = v.clinicalExamination || '';
+  document.getElementById('clnDiagnosis').value = v.diagnosis || '';
+  document.getElementById('clnTreatment').value = v.treatmentPerformed || '';
+  document.getElementById('clnPrescription').value = v.prescription || '';
+  document.getElementById('clnAdvice').value = v.advice || '';
+  document.getElementById('clnNextVisit').value = v.nextVisitDate || '';
+  openModal('clinicalModal');
+}
+async function saveClinicalNotes() {
+  const v = DB.visits.find(x => x.id === currentClinicalVisitId);
+  if (!v) return;
+  v.chiefComplaint = document.getElementById('clnComplaint').value.trim();
+  v.clinicalExamination = document.getElementById('clnExam').value.trim();
+  v.diagnosis = document.getElementById('clnDiagnosis').value.trim();
+  v.treatmentPerformed = document.getElementById('clnTreatment').value.trim();
+  v.prescription = document.getElementById('clnPrescription').value.trim();
+  v.advice = document.getElementById('clnAdvice').value.trim();
+  v.nextVisitDate = document.getElementById('clnNextVisit').value;
+  closeModal('clinicalModal');
+  openProfile(v.patientId);
+  await save();
+  showToast('Clinical notes saved', 'success');
+}
+
+/* ── Patient Photos & X-Rays (Supabase Storage) ── */
+let currentProfilePatientId = null;
+async function loadPatientFiles(patientId) {
+  const gallery = document.getElementById('pmFileGallery');
+  gallery.innerHTML = '<div class="empty-state" style="padding:10px;grid-column:1/-1;">Loading...</div>';
+  const { data, error } = await sb.storage.from('patient-files').list(patientId, { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+  if (error) { gallery.innerHTML = '<div class="empty-state" style="padding:10px;grid-column:1/-1;">Could not load files — check internet connection</div>'; return; }
+  if (!data || !data.length) { gallery.innerHTML = '<div class="empty-state" style="padding:10px;grid-column:1/-1;">No photos or X-rays uploaded yet</div>'; return; }
+  gallery.innerHTML = data.map(f => {
+    const path = `${patientId}/${f.name}`;
+    const { data: urlData } = sb.storage.from('patient-files').getPublicUrl(path);
+    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name);
+    return `<div class="file-thumb" onclick="window.open('${urlData.publicUrl}','_blank')">
+      ${isImage ? `<img src="${urlData.publicUrl}" alt="patient file" loading="lazy">` : `<div class="file-pdf-icon">📄</div>`}
+      <button class="file-del" onclick="event.stopPropagation(); deletePatientFile('${patientId}','${f.name}')" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
+async function uploadPatientFile(fileList) {
+  if (!fileList.length || !currentProfilePatientId) return;
+  const file = fileList[0];
+  if (file.size > 10 * 1024 * 1024) { showToast('File too large — please keep under 10MB', 'error'); document.getElementById('pmFileInput').value = ''; return; }
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const path = `${currentProfilePatientId}/${Date.now()}-${safeName}`;
+  showToast('Uploading...', 'info');
+  const { error } = await sb.storage.from('patient-files').upload(path, file);
+  document.getElementById('pmFileInput').value = '';
+  if (error) { showToast('Upload failed — check internet connection', 'error'); return; }
+  showToast('File uploaded', 'success');
+  loadPatientFiles(currentProfilePatientId);
+}
+async function deletePatientFile(patientId, fileName) {
+  if (!confirm('Delete this file?')) return;
+  const { error } = await sb.storage.from('patient-files').remove([`${patientId}/${fileName}`]);
+  if (error) { showToast('Could not delete file — check internet connection', 'error'); return; }
+  loadPatientFiles(patientId);
+  showToast('File deleted', 'info');
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1878,13 +2150,38 @@ function printOPD() {
   window.print();
 }
 
+/* ── Prescription (Rx) ── */
+function openPrescription(visitId) {
+  const v = DB.visits.find(x => x.id === visitId);
+  if (!v) return;
+  const p = DB.patients.find(pt => pt.patientId === v.patientId) || {};
+
+  document.getElementById('rxDateHead').textContent = fmtDate(v.date);
+  document.getElementById('rxPatientName').textContent = p.name || '—';
+  document.getElementById('rxAgeGender').textContent = `${p.age||'—'} / ${p.gender||'—'}`;
+  document.getElementById('rxDate').textContent = fmtDate(v.date);
+  document.getElementById('rxDoctor').textContent = DOCTOR_NAMES[v.doctor] || v.doctor;
+  document.getElementById('rxDoctorSignName').textContent = DOCTOR_NAMES[v.doctor] || v.doctor;
+  document.getElementById('rxPrescriptionText').textContent = v.prescription && v.prescription.trim() ? v.prescription : 'No prescription recorded for this visit yet.';
+
+  const adviceBlock = document.getElementById('rxAdviceBlock');
+  if (v.advice && v.advice.trim()) { adviceBlock.style.display = 'block'; adviceBlock.textContent = '💡 Advice: ' + v.advice; }
+  else adviceBlock.style.display = 'none';
+
+  document.getElementById('rxNextVisitBlock').textContent = v.nextVisitDate ? `Next Visit: ${fmtDate(v.nextVisitDate)}` : '';
+
+  openModal('prescriptionModal');
+}
+function printPrescription() {
+  document.body.classList.add('printing-prescription');
+  window.print();
+}
+
 /* ══════════════════════════════════════════════════════════════════
-   SECTION 21 — DENTAL CHART (32 teeth, FDI numbering)
+   SECTION 21 — DENTAL CHART (32 teeth, Universal Numbering System)
    ══════════════════════════════════════════════════════════════════ */
-const FDI_UPPER_RIGHT = [18,17,16,15,14,13,12,11];
-const FDI_UPPER_LEFT  = [21,22,23,24,25,26,27,28];
-const FDI_LOWER_RIGHT = [48,47,46,45,44,43,42,41];
-const FDI_LOWER_LEFT  = [31,32,33,34,35,36,37,38];
+const UNIVERSAL_UPPER = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+const UNIVERSAL_LOWER = [32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17];
 const CONDITIONS = ['Healthy','Decayed','Filled','RCT Done','Crown','Missing','Extracted','Implant'];
 const CONDITION_CLASS = {
   'Healthy':'tooth-healthy', 'Decayed':'tooth-decayed', 'Filled':'tooth-filled',
@@ -1905,8 +2202,8 @@ function loadDentalChartForInput() {
   currentChartPatientId = pid;
   document.getElementById('dcHint').style.display = 'none';
   document.getElementById('dcPatientHead').textContent = `🦷 Dental Chart — ${p.name} (${p.patientId})`;
-  renderToothRow('dcUpperRow', [...FDI_UPPER_RIGHT, ...FDI_UPPER_LEFT]);
-  renderToothRow('dcLowerRow', [...FDI_LOWER_RIGHT, ...FDI_LOWER_LEFT]);
+  renderToothRow('dcUpperRow', UNIVERSAL_UPPER);
+  renderToothRow('dcLowerRow', UNIVERSAL_LOWER);
   renderLegend();
   document.getElementById('dcChartCard').style.display = 'block';
 }
@@ -1952,8 +2249,8 @@ async function saveTooth() {
   existing.history.push({ date: todayStr(), status, notes });
   chart[currentToothNum] = existing;
   closeModal('toothModal');
-  renderToothRow('dcUpperRow', [...FDI_UPPER_RIGHT, ...FDI_UPPER_LEFT]);
-  renderToothRow('dcLowerRow', [...FDI_LOWER_RIGHT, ...FDI_LOWER_LEFT]);
+  renderToothRow('dcUpperRow', UNIVERSAL_UPPER);
+  renderToothRow('dcLowerRow', UNIVERSAL_LOWER);
   await saveDental();
   showToast(`Tooth #${currentToothNum} updated to ${status}`, 'success');
 }
@@ -2526,10 +2823,11 @@ function closeModal(id) { document.getElementById(id).classList.remove('show'); 
 window.addEventListener('afterprint', () => {
   document.body.classList.remove('printing-receipt');
   document.body.classList.remove('printing-opd');
+  document.body.classList.remove('printing-prescription');
 });
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  ['profileModal','paymentModal','receiptModal','opdModal','toothModal','planModal','planDetailModal','appointmentModal','itemModal','expenseModal','userModal'].forEach(id => closeModal(id));
+  ['profileModal','paymentModal','receiptModal','opdModal','toothModal','planModal','planDetailModal','appointmentModal','itemModal','expenseModal','userModal','medicalModal','clinicalModal','prescriptionModal'].forEach(id => closeModal(id));
 });
 
 /* ══════════════════════════════════════════════════════════════════
