@@ -455,7 +455,7 @@
         <div class="card">
           <h3>📅 Today's Appointments</h3>
           <div class="table-wrap">
-            <table><thead><tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th></tr></thead><tbody id="todayAppointments"></tbody></table>
+            <table><thead><tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th><th></th></tr></thead><tbody id="todayAppointments"></tbody></table>
           </div>
         </div>
 
@@ -1226,6 +1226,35 @@ function visitStatus(v) {
   if ((v.paid||0) > 0) return { cls: 'badge-partial', text: 'Partial' };
   return { cls: 'badge-due', text: 'Due' };
 }
+
+/* ── WhatsApp messaging (one-click, no API key needed) ── */
+function toWhatsAppNumber(raw) {
+  let digits = normalize(raw);
+  if (!digits) return null;
+  if (digits.startsWith('0')) digits = '92' + digits.slice(1);
+  else if (!digits.startsWith('92')) digits = '92' + digits;
+  return digits;
+}
+function sendWhatsApp(rawNumber, message) {
+  const num = toWhatsAppNumber(rawNumber);
+  if (!num || num.length < 11) { showToast('This patient has no valid WhatsApp number saved', 'error'); return; }
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(message)}`, '_blank');
+}
+function sendThankYouWhatsApp(patientId) {
+  const p = DB.patients.find(x => x.patientId === patientId);
+  if (!p) return;
+  const msg = `Assalam-o-Alaikum ${p.name}! 🦷\n\nThank you for visiting ${DB.settings.clinicName}. Your Patient ID is *${p.patientId}* — please save this for future visits.\n\nFor any query, contact us at ${DB.settings.clinicPhone}.\n\nTake care!`;
+  sendWhatsApp(p.whatsapp, msg);
+}
+function sendAppointmentReminder(aptId) {
+  const a = DB.appointments.find(x => x.id === aptId);
+  if (!a) return;
+  const p = DB.patients.find(x => x.patientId === a.patientId);
+  if (!p) return;
+  const msg = `Assalam-o-Alaikum ${p.name}! 🦷\n\nThis is a reminder for your appointment at ${DB.settings.clinicName}:\n📅 Date: ${fmtDate(a.date)}\n🕐 Time: ${a.time || 'To be confirmed'}\n👩‍⚕️ Doctor: ${DOCTOR_NAMES[a.doctor] || a.doctor}${a.reason ? `\n📝 Reason: ${a.reason}` : ''}\n\nPlease arrive 10 minutes early. For any change, contact us at ${DB.settings.clinicPhone}.`;
+  sendWhatsApp(p.whatsapp, msg);
+}
+
 function extractPatientId(val) {
   const m = (val || '').match(/PATA-\d{6}/);
   return m ? m[0] : null;
@@ -1585,6 +1614,7 @@ function renderTable() {
         <td>
           <div class="row-actions">
             <button class="icon-btn" onclick="openProfile('${p.patientId}')" title="View Profile">👁</button>
+            <button class="icon-btn" onclick="sendThankYouWhatsApp('${p.patientId}')" title="Send Thank You on WhatsApp">💬</button>
             <button class="icon-btn" onclick="openReceipt(${v.id})" title="Receipt">🧾</button>
             <button class="icon-btn" onclick="openOPD(${v.id})" title="OPD Slip">📋</button>
             <button class="icon-btn del" onclick="deleteVisit(${v.id})" title="Delete">✕</button>
@@ -1652,8 +1682,8 @@ function renderDashboard() {
   document.getElementById('todayAppointments').innerHTML = todays.length ? todays.map(a => {
     const p = DB.patients.find(x => x.patientId === a.patientId) || {};
     const statusCls = a.status === 'Completed' ? 'badge-paid' : a.status === 'Cancelled' ? 'badge-due' : 'badge-partial';
-    return `<tr><td>${esc(a.time||'—')}</td><td>${esc(p.name||'—')}</td><td>${esc(DOCTOR_NAMES[a.doctor]||a.doctor)}</td><td>${esc(a.reason||'—')}</td><td><span class="badge ${statusCls}">${a.status}</span></td></tr>`;
-  }).join('') : `<tr><td colspan="5"><div class="empty-state">No appointments scheduled for today</div></td></tr>`;
+    return `<tr><td>${esc(a.time||'—')}</td><td>${esc(p.name||'—')}</td><td>${esc(DOCTOR_NAMES[a.doctor]||a.doctor)}</td><td>${esc(a.reason||'—')}</td><td><span class="badge ${statusCls}">${a.status}</span></td><td><button class="icon-btn" title="Send Reminder on WhatsApp" onclick="sendAppointmentReminder(${a.id})">💬</button></td></tr>`;
+  }).join('') : `<tr><td colspan="6"><div class="empty-state">No appointments scheduled for today</div></td></tr>`;
 
   const recent = [...visitsForTab()].sort((a,b) => (b.date||'').localeCompare(a.date||'') || b.id-a.id).slice(0,6);
   document.getElementById('recentVisitsTable').innerHTML = recent.length ? recent.map(v => {
@@ -2076,6 +2106,7 @@ function renderAppointments() {
       <td>${esc(a.reason || '—')}</td>
       <td><span class="badge ${statusCls}">${a.status}</span></td>
       <td><div class="row-actions">
+        <button class="icon-btn" title="Send Reminder on WhatsApp" onclick="sendAppointmentReminder(${a.id})">💬</button>
         ${a.status === 'Upcoming' ? `<button class="icon-btn" title="Mark Completed" onclick="setAptStatus(${a.id},'Completed')">✔</button><button class="icon-btn del" title="Cancel" onclick="setAptStatus(${a.id},'Cancelled')">✕</button>` : ''}
         <button class="icon-btn del" title="Delete" onclick="deleteAppointment(${a.id})">🗑</button>
       </div></td>
