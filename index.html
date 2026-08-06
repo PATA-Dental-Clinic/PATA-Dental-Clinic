@@ -481,7 +481,7 @@
             <h3>🏆 Top Procedures</h3>
             <div id="topProcedures"></div>
           </div>
-          <div class="card">
+          <div class="card" id="docPerformanceCard">
             <h3>👩‍⚕️ Doctor Performance</h3>
             <div class="doc-compare" id="docCompare"></div>
           </div>
@@ -728,7 +728,7 @@
             </select>
           </div>
           <div class="table-wrap">
-            <table><thead><tr><th>Username</th><th>Full Name</th><th>Role</th><th></th></tr></thead><tbody id="usersTable"></tbody></table>
+            <table><thead><tr><th>Username</th><th>Full Name</th><th>Role</th><th>Shift</th><th></th></tr></thead><tbody id="usersTable"></tbody></table>
           </div>
         </div>
       </div>
@@ -802,7 +802,7 @@
   <div class="modal-box narrow">
     <div class="modal-head">
       <div class="modal-avatar">💳</div>
-      <div class="modal-head-info"><h2>Update Payment</h2><p id="payBillNo">—</p></div>
+      <div class="modal-head-info"><h2>Payment</h2><p id="payBillNo">—</p></div>
       <button class="modal-close" onclick="closeModal('paymentModal')">✕</button>
     </div>
     <div class="modal-body">
@@ -811,15 +811,26 @@
         <div><div class="num" id="payAlreadyPaid">0</div><div class="lbl">Paid</div></div>
         <div><div class="num" id="payDue">0</div><div class="lbl">Due</div></div>
       </div>
+
+      <div class="section-tag">Discount</div>
       <div class="form-grid">
         <div class="field"><label>Discount (Rs.)</label><input type="number" id="payDiscount" min="0"></div>
-        <div class="field"><label>Paid Amount (Rs.)</label><input type="number" id="payPaidInput" min="0"></div>
-        <div class="field"><label>Payment Method</label><select id="payMethodInput"><option>Cash</option><option>Card</option><option>Online</option></select></div>
-        <div class="field"><label>Payment Date</label><input type="date" id="payDateInput"></div>
+        <div class="field" style="justify-content:flex-end;"><button class="btn-outline" onclick="saveDiscount()">Update Discount</button></div>
       </div>
+
+      <div class="section-tag">Payment History</div>
+      <div id="payHistoryList"></div>
+
+      <div class="section-tag">Add New Payment</div>
+      <div class="form-grid">
+        <div class="field"><label>Amount (Rs.)</label><input type="number" id="payNewAmount" min="0" placeholder="0"></div>
+        <div class="field"><label>Method</label><select id="payNewMethod"><option>Cash</option><option>Card</option><option>Online</option></select></div>
+        <div class="field" style="grid-column: span 2;"><label>Date</label><input type="date" id="payNewDate"></div>
+      </div>
+      <button class="btn-add" style="width:100%;margin-top:8px;" onclick="addPaymentEntry()">+ Add Payment</button>
+
       <div class="modal-actions">
-        <button class="btn-clear" onclick="closeModal('paymentModal')">Cancel</button>
-        <button class="btn-add" onclick="savePayment()">💾 Save Payment</button>
+        <button class="btn-outline" onclick="closeModal('paymentModal')">Close</button>
       </div>
     </div>
   </div>
@@ -1156,10 +1167,17 @@
         <div class="field"><label>Username</label><input type="text" id="userUsername" placeholder="e.g. ayesha"></div>
         <div class="field"><label>Password</label><input type="password" id="userPassword"></div>
         <div class="field" style="grid-column: span 2;"><label>Role</label>
-          <select id="userRole">
+          <select id="userRole" onchange="toggleUserShiftField()">
             <option value="Admin">Admin — full access</option>
             <option value="Doctor">Doctor — clinical + billing</option>
             <option value="Reception" selected>Reception — registration & appointments</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column: span 2;" id="userShiftField">
+          <label>Assigned Shift</label>
+          <select id="userShiftAccess">
+            <option value="morning">Morning Shift Only</option>
+            <option value="evening">Evening Shift Only</option>
           </select>
         </div>
       </div>
@@ -1229,8 +1247,8 @@ function setSyncStatus(ok, msg) {
 const rowToPatient = r => ({ patientId: r.patient_id, name: r.name, guardian: r.guardian, age: r.age, gender: r.gender, cnic: r.cnic, whatsapp: r.whatsapp, altNumber: r.alt_number, address: r.address, createdDate: r.created_date, bloodGroup: r.blood_group, allergies: r.allergies, diabetes: r.diabetes, hepatitis: r.hepatitis, hypertension: r.hypertension, currentMedicines: r.current_medicines, emergencyContactName: r.emergency_contact_name, emergencyContactNumber: r.emergency_contact_number, familyHistory: r.family_history, previousDentalHistory: r.previous_dental_history, consentStatus: r.consent_status });
 const patientToRow = p => ({ patient_id: p.patientId, name: p.name, guardian: p.guardian||'', age: p.age||'', gender: p.gender||'', cnic: p.cnic||'', whatsapp: p.whatsapp||'', alt_number: p.altNumber||'', address: p.address||'', created_date: p.createdDate, blood_group: p.bloodGroup||'', allergies: p.allergies||'', diabetes: p.diabetes||'', hepatitis: p.hepatitis||'', hypertension: p.hypertension||'', current_medicines: p.currentMedicines||'', emergency_contact_name: p.emergencyContactName||'', emergency_contact_number: p.emergencyContactNumber||'', family_history: p.familyHistory||'', previous_dental_history: p.previousDentalHistory||'', consent_status: p.consentStatus||'Not Signed' });
 
-const rowToVisit = r => ({ id: r.id, billNumber: r.bill_number, patientId: r.patient_id, doctor: r.doctor, procedure: r.procedure, customProcedure: r.custom_procedure, notes: r.notes, date: r.date, consultationFee: Number(r.consultation_fee)||0, procedureCharges: Number(r.procedure_charges)||0, discount: Number(r.discount)||0, paid: Number(r.paid)||0, paymentMethod: r.payment_method, paymentDate: r.payment_date, repeat: r.repeat, visitNumber: r.visit_number, month: r.month, year: r.year, chiefComplaint: r.chief_complaint, clinicalExamination: r.clinical_examination, diagnosis: r.diagnosis, treatmentPerformed: r.treatment_performed, prescription: r.prescription, advice: r.advice, nextVisitDate: r.next_visit_date });
-const visitToRow = v => ({ id: v.id, bill_number: v.billNumber, patient_id: v.patientId, doctor: v.doctor, procedure: v.procedure||'', custom_procedure: v.customProcedure||'', notes: v.notes||'', date: v.date||null, consultation_fee: v.consultationFee||0, procedure_charges: v.procedureCharges||0, discount: v.discount||0, paid: v.paid||0, payment_method: v.paymentMethod||'', payment_date: v.paymentDate||null, repeat: !!v.repeat, visit_number: v.visitNumber||1, month: v.month||'', year: v.year||'', chief_complaint: v.chiefComplaint||'', clinical_examination: v.clinicalExamination||'', diagnosis: v.diagnosis||'', treatment_performed: v.treatmentPerformed||'', prescription: v.prescription||'', advice: v.advice||'', next_visit_date: v.nextVisitDate||null });
+const rowToVisit = r => ({ id: r.id, billNumber: r.bill_number, patientId: r.patient_id, doctor: r.doctor, procedure: r.procedure, customProcedure: r.custom_procedure, notes: r.notes, date: r.date, consultationFee: Number(r.consultation_fee)||0, procedureCharges: Number(r.procedure_charges)||0, discount: Number(r.discount)||0, paid: Number(r.paid)||0, paymentMethod: r.payment_method, paymentDate: r.payment_date, repeat: r.repeat, visitNumber: r.visit_number, month: r.month, year: r.year, chiefComplaint: r.chief_complaint, clinicalExamination: r.clinical_examination, diagnosis: r.diagnosis, treatmentPerformed: r.treatment_performed, prescription: r.prescription, advice: r.advice, nextVisitDate: r.next_visit_date, payments: r.payments || [] });
+const visitToRow = v => ({ id: v.id, bill_number: v.billNumber, patient_id: v.patientId, doctor: v.doctor, procedure: v.procedure||'', custom_procedure: v.customProcedure||'', notes: v.notes||'', date: v.date||null, consultation_fee: v.consultationFee||0, procedure_charges: v.procedureCharges||0, discount: v.discount||0, paid: v.paid||0, payment_method: v.paymentMethod||'', payment_date: v.paymentDate||null, repeat: !!v.repeat, visit_number: v.visitNumber||1, month: v.month||'', year: v.year||'', chief_complaint: v.chiefComplaint||'', clinical_examination: v.clinicalExamination||'', diagnosis: v.diagnosis||'', treatment_performed: v.treatmentPerformed||'', prescription: v.prescription||'', advice: v.advice||'', next_visit_date: v.nextVisitDate||null, payments: v.payments || [] });
 
 const rowToPlan = r => ({ id: r.id, planNumber: r.plan_number, patientId: r.patient_id, title: r.title, createdDate: r.created_date, procedures: r.procedures || [] });
 const planToRow = p => ({ id: p.id, plan_number: p.planNumber, patient_id: p.patientId, title: p.title, created_date: p.createdDate, procedures: p.procedures });
@@ -1244,8 +1262,8 @@ const itemToRow = it => ({ id: it.id, item_number: it.itemNumber, name: it.name,
 const rowToExpense = r => ({ id: r.id, expenseNumber: r.expense_number, category: r.category, amount: Number(r.amount)||0, date: r.date, notes: r.notes });
 const expenseToRow = e => ({ id: e.id, expense_number: e.expenseNumber, category: e.category, amount: e.amount||0, date: e.date||null, notes: e.notes||'' });
 
-const rowToUser = r => ({ id: r.id, username: r.username, passwordHash: r.password_hash, fullName: r.full_name, role: r.role });
-const userToRow = u => ({ id: u.id, username: u.username, password_hash: u.passwordHash, full_name: u.fullName||'', role: u.role });
+const rowToUser = r => ({ id: r.id, username: r.username, passwordHash: r.password_hash, fullName: r.full_name, role: r.role, shiftAccess: r.shift_access || 'both' });
+const userToRow = u => ({ id: u.id, username: u.username, password_hash: u.passwordHash, full_name: u.fullName||'', role: u.role, shift_access: u.shiftAccess || 'both' });
 
 const rowToSettings = r => ({ clinicName: r.clinic_name, clinicSubtitle: r.clinic_subtitle, clinicAddress: r.clinic_address, clinicPhone: r.clinic_phone, logoEmoji: r.logo_emoji, doctorMorning: r.doctor_morning, doctorEvening: r.doctor_evening, procedures: r.procedures || DEFAULT_SETTINGS.procedures, loginEnabled: !!r.login_enabled });
 const settingsToRow = s => ({ id: 1, clinic_name: s.clinicName, clinic_subtitle: s.clinicSubtitle, clinic_address: s.clinicAddress, clinic_phone: s.clinicPhone, logo_emoji: s.logoEmoji, doctor_morning: s.doctorMorning, doctor_evening: s.doctorEvening, procedures: s.procedures, login_enabled: !!s.loginEnabled });
@@ -1513,6 +1531,8 @@ function bumpVersion() {
    SECTION 9 — DOCTOR TAB SWITCH
    ══════════════════════════════════════════════════════════════════ */
 function switchTab(tab) {
+  const session = currentSession();
+  if (session && session.shiftAccess && session.shiftAccess !== 'both' && session.shiftAccess !== tab) return;
   activeTab = tab;
   document.getElementById('tabMorning').classList.toggle('active', tab === 'morning');
   document.getElementById('tabEvening').classList.toggle('active', tab === 'evening');
@@ -1529,10 +1549,13 @@ function switchTab(tab) {
 function findPatientMatch(name, contact) {
   const nameQ = name.trim().toLowerCase();
   const contactQ = normalize(contact);
+  // Require BOTH name and phone to match — a shared family number alone
+  // should never merge two different people into one patient record.
+  if (nameQ.length < 3 || contactQ.length < 7) return null;
   return DB.patients.find(p => {
-    const contactMatch = contactQ.length > 6 && (normalize(p.whatsapp) === contactQ || normalize(p.altNumber) === contactQ);
-    const nameMatch = nameQ.length > 2 && p.name.toLowerCase() === nameQ;
-    return contactMatch || nameMatch;
+    const nameMatch = p.name.toLowerCase() === nameQ;
+    const contactMatch = normalize(p.whatsapp) === contactQ || normalize(p.altNumber) === contactQ;
+    return nameMatch && contactMatch;
   }) || null;
 }
 function patientVisits(patientId) {
@@ -1663,6 +1686,7 @@ async function addPatient() {
     consultationFee, procedureCharges, discount, paid,
     paymentMethod: document.getElementById('fPayMethod').value,
     paymentDate: paid > 0 ? visitDate : '',
+    payments: paid > 0 ? [{ id: Date.now(), amount: paid, method: document.getElementById('fPayMethod').value, date: visitDate }] : [],
     repeat: isRepeat,
     visitNumber: patientVisits(patient.patientId).length + 1,
     month: document.getElementById('selMonth').value,
@@ -1889,27 +1913,69 @@ function openPayment(visitId) {
   if (!v) return;
   paymentVisitId = visitId;
   document.getElementById('payBillNo').textContent = v.billNumber;
+  document.getElementById('payDiscount').value = v.discount || 0;
+  document.getElementById('payNewAmount').value = '';
+  document.getElementById('payNewMethod').value = 'Cash';
+  document.getElementById('payNewDate').valueAsDate = new Date();
+  renderPaymentModal(v);
+  openModal('paymentModal');
+}
+function renderPaymentModal(v) {
   document.getElementById('payTotal').textContent = visitTotal(v).toLocaleString();
   document.getElementById('payAlreadyPaid').textContent = (v.paid||0).toLocaleString();
   document.getElementById('payDue').textContent = visitDue(v).toLocaleString();
-  document.getElementById('payDiscount').value = v.discount || 0;
-  document.getElementById('payPaidInput').value = v.paid || 0;
-  document.getElementById('payMethodInput').value = v.paymentMethod || 'Cash';
-  document.getElementById('payDateInput').value = v.paymentDate || v.date || '';
-  openModal('paymentModal');
+  const payments = v.payments || [];
+  document.getElementById('payHistoryList').innerHTML = payments.length ? [...payments].reverse().map(p => `
+    <div class="plan-item-row">
+      <div><b>${money(p.amount)}</b><div style="font-size:11px;color:var(--muted)">${esc(p.method)} · ${fmtDate(p.date)}</div></div>
+      <button class="icon-btn del" onclick="deletePaymentEntry('${p.id}')" title="Remove this payment">✕</button>
+    </div>
+  `).join('') : '<div class="empty-state" style="padding:10px;">No payments recorded yet</div>';
 }
-async function savePayment() {
+async function saveDiscount() {
   const v = DB.visits.find(x => x.id === paymentVisitId);
   if (!v) return;
   v.discount = parseFloat(document.getElementById('payDiscount').value) || 0;
-  v.paid = parseFloat(document.getElementById('payPaidInput').value) || 0;
-  v.paymentMethod = document.getElementById('payMethodInput').value;
-  v.paymentDate = document.getElementById('payDateInput').value;
-  closeModal('paymentModal');
+  renderPaymentModal(v);
   renderBillingTable();
   renderTable();
   await save();
-  showToast(`Payment updated for ${v.billNumber}`, 'success');
+  showToast('Discount updated', 'success');
+}
+async function addPaymentEntry() {
+  const v = DB.visits.find(x => x.id === paymentVisitId);
+  if (!v) return;
+  const amount = parseFloat(document.getElementById('payNewAmount').value) || 0;
+  if (amount <= 0) { showToast('Enter a valid payment amount', 'error'); return; }
+  const due = visitDue(v);
+  if (amount > due && due > 0) {
+    if (!confirm(`This is more than the outstanding due (${money(due)}). Add it anyway?`)) return;
+  }
+  const method = document.getElementById('payNewMethod').value;
+  const date = document.getElementById('payNewDate').value || todayStr();
+  if (!v.payments) v.payments = [];
+  v.payments.push({ id: Date.now(), amount, method, date });
+  v.paid = v.payments.reduce((s,p) => s + (p.amount||0), 0);
+  v.paymentMethod = method;
+  v.paymentDate = date;
+  document.getElementById('payNewAmount').value = '';
+  renderPaymentModal(v);
+  renderBillingTable();
+  renderTable();
+  await save();
+  showToast(`Payment of ${money(amount)} recorded`, 'success');
+}
+async function deletePaymentEntry(paymentId) {
+  const v = DB.visits.find(x => x.id === paymentVisitId);
+  if (!v) return;
+  if (!confirm('Remove this payment entry? This will reduce the total paid amount.')) return;
+  v.payments = (v.payments||[]).filter(p => String(p.id) !== String(paymentId));
+  v.paid = v.payments.reduce((s,p) => s + (p.amount||0), 0);
+  renderPaymentModal(v);
+  renderBillingTable();
+  renderTable();
+  await save();
+  showToast('Payment entry removed', 'info');
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2108,7 +2174,15 @@ function openReceipt(visitId) {
   if (v.consultationFee) itemsHtml += `<tr><td>Consultation Fee</td><td class="r">${(v.consultationFee).toLocaleString()}</td></tr>`;
   itemsHtml += `<tr><td>Procedure Charges — ${esc(v.customProcedure || v.procedure || 'N/A')}</td><td class="r">${(v.procedureCharges||0).toLocaleString()}</td></tr>`;
   if (v.discount) itemsHtml += `<tr><td>Discount</td><td class="r">− ${(v.discount).toLocaleString()}</td></tr>`;
-  itemsHtml += `<tr><td>Total Due</td><td class="r">${visitTotal(v).toLocaleString()}</td></tr>`;
+  itemsHtml += `<tr><td>Total Bill</td><td class="r">${visitTotal(v).toLocaleString()}</td></tr>`;
+  const payments = v.payments || [];
+  if (payments.length) {
+    itemsHtml += `<tr><td colspan="2" style="padding-top:14px;font-weight:700;color:var(--teal);font-size:11px;text-transform:uppercase;">Payments Received</td></tr>`;
+    payments.forEach(pmt => {
+      itemsHtml += `<tr><td>${fmtDate(pmt.date)} — ${esc(pmt.method)}</td><td class="r">${(pmt.amount||0).toLocaleString()}</td></tr>`;
+    });
+  }
+  itemsHtml += `<tr><td>Balance Due</td><td class="r">${visitDue(v).toLocaleString()}</td></tr>`;
   document.getElementById('rcItemsBody').innerHTML = itemsHtml;
   document.getElementById('rcTotalPaid').textContent = (v.paid||0).toLocaleString();
   document.getElementById('rcMethod').textContent = v.paymentMethod || '—';
@@ -2679,13 +2753,22 @@ async function deleteExpense(id) {
 function renderUsersTable() {
   document.getElementById('setLoginEnabled').value = DB.settings.loginEnabled ? 'on' : 'off';
   const tbody = document.getElementById('usersTable');
-  tbody.innerHTML = DB.users.length ? DB.users.map(u => `<tr><td>${esc(u.username)}</td><td>${esc(u.fullName)}</td><td><span class="badge badge-new">${esc(u.role)}</span></td><td><button class="icon-btn del" onclick="deleteUser('${u.id}')">✕</button></td></tr>`).join('') : `<tr><td colspan="4"><div class="empty-state">No users added — login protection is inactive</div></td></tr>`;
+  tbody.innerHTML = DB.users.length ? DB.users.map(u => {
+    const shiftLabel = u.shiftAccess === 'both' ? 'Both / Full' : esc(DOCTOR_NAMES[u.shiftAccess] || u.shiftAccess);
+    return `<tr><td>${esc(u.username)}</td><td>${esc(u.fullName)}</td><td><span class="badge badge-new">${esc(u.role)}</span></td><td>${shiftLabel}</td><td><button class="icon-btn del" onclick="deleteUser('${u.id}')">✕</button></td></tr>`;
+  }).join('') : `<tr><td colspan="5"><div class="empty-state">No users added — login protection is inactive</div></td></tr>`;
+}
+function toggleUserShiftField() {
+  const role = document.getElementById('userRole').value;
+  document.getElementById('userShiftField').style.display = role === 'Admin' ? 'none' : 'flex';
 }
 function openNewUser() {
   document.getElementById('userUsername').value = '';
   document.getElementById('userPassword').value = '';
   document.getElementById('userFullName').value = '';
   document.getElementById('userRole').value = 'Reception';
+  document.getElementById('userShiftAccess').value = 'morning';
+  toggleUserShiftField();
   openModal('userModal');
 }
 async function saveNewUser() {
@@ -2693,9 +2776,10 @@ async function saveNewUser() {
   const password = document.getElementById('userPassword').value;
   const fullName = document.getElementById('userFullName').value.trim();
   const role = document.getElementById('userRole').value;
+  const shiftAccess = role === 'Admin' ? 'both' : document.getElementById('userShiftAccess').value;
   if (!username || !password) { showToast('Username and password are required', 'error'); return; }
   if (DB.users.some(u => u.username.toLowerCase() === username.toLowerCase())) { showToast('That username already exists', 'error'); return; }
-  DB.users.push({ id: Date.now(), username, passwordHash: simpleHash(password), fullName, role });
+  DB.users.push({ id: Date.now(), username, passwordHash: simpleHash(password), fullName, role, shiftAccess });
   closeModal('userModal');
   renderUsersTable();
   await saveUsers();
@@ -2727,6 +2811,7 @@ function checkLoginGate() {
   } else {
     document.getElementById('loginGate').style.display = 'none';
     applyRoleVisibility();
+    applyShiftLock();
   }
 }
 function attemptLogin() {
@@ -2735,9 +2820,10 @@ function attemptLogin() {
   const user = DB.users.find(u => u.username.toLowerCase() === uname.toLowerCase() && u.passwordHash === simpleHash(pass));
   if (!user) { document.getElementById('loginError').style.display = 'block'; return; }
   document.getElementById('loginError').style.display = 'none';
-  sessionStorage.setItem('pata_session', JSON.stringify({ username: user.username, role: user.role, fullName: user.fullName }));
+  sessionStorage.setItem('pata_session', JSON.stringify({ username: user.username, role: user.role, fullName: user.fullName, shiftAccess: user.shiftAccess || 'both' }));
   document.getElementById('loginGate').style.display = 'none';
   applyRoleVisibility();
+  applyShiftLock();
   showToast(`Welcome, ${user.fullName || user.username}`, 'success');
 }
 function logout() {
@@ -2753,7 +2839,7 @@ function applyRoleVisibility() {
     let visible = true;
     if (session) {
       if (adminOnly.includes(view) && session.role !== 'Admin') visible = false;
-      if (staffOnly.includes(view) && session.role === 'Reception') visible = false;
+      if (staffOnly.includes(view) && session.role !== 'Admin') visible = false;
     }
     btn.style.display = visible ? '' : 'none';
   });
@@ -2768,6 +2854,26 @@ function applyRoleVisibility() {
     info.style.display = 'none';
     logoutBtn.style.display = 'none';
   }
+}
+/* ── Shift lock: Doctor/Reception users only see their own shift's data ── */
+function applyShiftLock() {
+  const session = currentSession();
+  const locked = session && session.shiftAccess && session.shiftAccess !== 'both';
+  const docCard = document.getElementById('docPerformanceCard');
+  if (locked) {
+    activeTab = session.shiftAccess;
+    document.getElementById('tabMorning').style.display = session.shiftAccess === 'morning' ? '' : 'none';
+    document.getElementById('tabEvening').style.display = session.shiftAccess === 'evening' ? '' : 'none';
+    document.getElementById('tabMorning').classList.toggle('active', session.shiftAccess === 'morning');
+    document.getElementById('tabEvening').classList.toggle('active', session.shiftAccess === 'evening');
+    document.getElementById('fDoctorDisplay').value = DOCTOR_NAMES[activeTab];
+    if (docCard) docCard.style.display = 'none';
+  } else {
+    document.getElementById('tabMorning').style.display = '';
+    document.getElementById('tabEvening').style.display = '';
+    if (docCard) docCard.style.display = '';
+  }
+  refreshCurrentView();
 }
 
 /* ══════════════════════════════════════════════════════════════════
